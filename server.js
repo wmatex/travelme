@@ -32,7 +32,7 @@ var SampleApp = function() {
         self.directionsAPI = 'https://maps.googleapis.com/maps/api/directions/json?';
         self.foursquareAPI = 'https://api.foursquare.com/v2/venues/explore';
 
-        self.MAX_FSQ_REQUESTS = 10;
+        self.MAX_FSQ_REQUESTS = 100;
 
         if (typeof self.ipaddress === "undefined") {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this

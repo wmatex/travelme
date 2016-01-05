@@ -152,16 +152,23 @@ function initMap() {
 
     function displayDirectionsPolyline(directions) {
       var points = google.maps.geometry.encoding.decodePath(directions.routes[0].overview_polyline.points);
+      _directions = new google.maps.Polyline({
+        path: points,
+        strokeColor: '#00B3FD',
+        strokeWeight: 4,
+        map: map,
+      });
+    }
+
+    function clearPlaces() {
       if (_directions != null) {
         _directions.setMap(null);
         _directions = null;
       }
-      _directions = new google.maps.Polyline({
-        path: points,
-        strokeColor: '#FF0000',
-        strokeWeight: 3,
-        map: map,
+      $.each(_places, function (key, place) {
+        place.m.setMap(null);
       });
+      _places = [];
     }
 
     function searchVenues() {
@@ -173,12 +180,7 @@ function initMap() {
       if (section != 'all') {
         query.section = section;
       }
-      if (_places.length > 0) {
-        $.each(_places, function (key, place) {
-          place.m.setMap(null);
-        });
-        _places = [];
-      }
+      clearPlaces();
       $.getJSON("/route/"+_points.origin.lat() + "," + _points.origin.lng() + "/" + _points.destination.lat() + "," + _points.destination.lng(), query,
       function(data) {
         console.log(data);
@@ -188,7 +190,11 @@ function initMap() {
           if (item != null) {
             $.each(item, function(key, place) {
               if (typeof place.venue != "undefined") {
-                var photo = place.venue.featuredPhotos.items[0];
+                var photo = null;
+                if (place.venue.photos.groups.length > 0 && place.venue.photos.groups[0].items.length > 0) {
+                  var p = place.venue.photos.groups[0].items[0];
+                  photo = p.prefix + "cap256" + p.suffix;
+                }
                 var category = place.venue.categories[0].icon;
                 var place = {
                   m: new google.maps.Marker({
@@ -197,7 +203,7 @@ function initMap() {
                     icon: category.prefix + "bg_32" + category.suffix,
                   }),
                   w: new google.maps.InfoWindow({
-                    content: '<div class="demo-card-image mdl-card mdl-shadow--2dp" style="background: url(\'' + photo.prefix + "cap256" + photo.suffix + '\') center / cover"><div class="mdl-card__title mdl-card--expand"></div> <div class="mdl-card__actions"> <span class="demo-card-image__filename">' + place.venue.name + '</span> </div></div>'
+                    content: '<div class="demo-card-image mdl-card mdl-shadow--2dp" style="background: url(\'' + photo + '\') center / cover"><div class="mdl-card__title mdl-card--expand"></div> <div class="mdl-card__actions"> <span class="demo-card-image__filename">' + place.venue.name + '</span> </div></div>'
 
                   })
                 };
@@ -226,6 +232,7 @@ function initMap() {
         _points[point] = e.latLng;
         searchVenues();
       });
+      return marker;
     }
 
     map.addListener('click', function(e) {
@@ -238,6 +245,7 @@ function initMap() {
           markers.origin = null;
           markers.dest = null;
         }
+        clearPlaces();
         markers.origin = createMarker(e.latLng, "origin", "S");
         _points.origin = e.latLng;
       } else if (destination == null) {
