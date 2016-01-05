@@ -189,10 +189,12 @@ function initMap() {
             $.each(item, function(key, place) {
               if (typeof place.venue != "undefined") {
                 var photo = place.venue.featuredPhotos.items[0];
+                var category = place.venue.categories[0].icon;
                 var place = {
                   m: new google.maps.Marker({
                     position: {lat: place.venue.location.lat, lng: place.venue.location.lng },
                     map: map,
+                    icon: category.prefix + "bg_32" + category.suffix,
                   }),
                   w: new google.maps.InfoWindow({
                     content: '<div class="demo-card-image mdl-card mdl-shadow--2dp" style="background: url(\'' + photo.prefix + "cap256" + photo.suffix + '\') center / cover"><div class="mdl-card__title mdl-card--expand"></div> <div class="mdl-card__actions"> <span class="demo-card-image__filename">' + place.venue.name + '</span> </div></div>'
@@ -211,11 +213,12 @@ function initMap() {
       });
     }
 
-    function createMarker(latLng, point) {
+    function createMarker(latLng, point, label) {
       var marker = new google.maps.Marker({
         position: latLng,
         animation: google.maps.Animation.DROP,
         map: map,
+        label: label,
         draggable: true,
       });
       marker.addListener('dragend', function(e) {
@@ -235,10 +238,10 @@ function initMap() {
           markers.origin = null;
           markers.dest = null;
         }
-        markers.origin = createMarker(e.latLng, "origin");
+        markers.origin = createMarker(e.latLng, "origin", "S");
         _points.origin = e.latLng;
       } else if (destination == null) {
-        markers.dest = createMarker(e.latLng, "destination");
+        markers.dest = createMarker(e.latLng, "destination", "G");
         _points.destination = e.latLng;
 
         searchVenues();
