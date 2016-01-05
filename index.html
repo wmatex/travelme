@@ -10,202 +10,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-
-/*!
- * Bootstrap v3.0.0
- *
- * Copyright 2013 Twitter, Inc
- * Licensed under the Apache License v2.0
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Designed and built with all the love in the world @twitter by @mdo and @fat.
- */
-
-  .logo {
-    background-size: cover;
-    height: 58px;
-    width: 180px;
-    margin-top: 6px;
-  }
-.logo a {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-*, *:before, *:after {
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-aside,
-footer,
-header,
-hgroup,
-section{
-  display: block;
-}
-body {
-  color: #404040;
-  font-family: "Helvetica Neue",Helvetica,"Liberation Sans",Arial,sans-serif;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-html {
-  font-family: sans-serif;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-}
-ul {
-    margin-top: 0;
-}
-.container {
-  margin-right: auto;
-  margin-left: auto;
-  padding-left: 15px;
-  padding-right: 15px;
-}
-.container:before,
-.container:after {
-  content: " ";
-  /* 1 */
-
-  display: table;
-  /* 2 */
-
-}
-.container:after {
-  clear: both;
-}
-.row {
-  margin-left: -15px;
-  margin-right: -15px;
-}
-.row:before,
-.row:after {
-  content: " ";
-  /* 1 */
-
-  display: table;
-  /* 2 */
-
-}
-.row:after {
-  clear: both;
-}
-.col-sm-6, .col-md-6, .col-xs-12 {
-  position: relative;
-  min-height: 1px;
-  padding-left: 15px;
-  padding-right: 15px;
-}
-.col-xs-12 {
-  width: 100%;
-}
-
-@media (min-width: 768px) {
-  .container {
-    width: 750px;
-  }
-  .col-sm-6 {
-    float: left;
-  }
-  .col-sm-6 {
-    width: 50%;
-  }
-}
-
-@media (min-width: 992px) {
-  .container {
-    width: 970px;
-  }
-  .col-md-6 {
-    float: left;
-  }
-  .col-md-6 {
-    width: 50%;
-  }
-}
-@media (min-width: 1200px) {
-  .container {
-    width: 1170px;
-  }
-}
-
-a {
-  color: #069;
-  text-decoration: none;
-}
-a:hover {
-  color: #EA0011;
-  text-decoration: underline;
-}
-hgroup {
-  margin-top: 50px;
-}
-footer {
-    margin: 50px 0 25px;
-}
-h1, h2, h3 {
-  color: #000;
-  line-height: 1.38em;
-  margin: 1.5em 0 .3em;
-}
-h1 {
-  font-size: 25px;
-  font-weight: 300;
-  border-bottom: 1px solid #fff;
-  margin-bottom: .5em;
-}
-h1:after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 1px;
-  background-color: #ddd;
-}
-h2 {
-  font-size: 19px;
-  font-weight: 400;
-}
-h3 {
-  font-size: 15px;
-  font-weight: 400;
-  margin: 0 0 .3em;
-}
-p {
-  margin: 0 0 2em;
-}
-p + h2 {
-  margin-top: 2em;
-}
-html {
-  background: #f5f5f5;
-  height: 100%;
-}
-code {
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 1px 5px;
-  color: #888;
-}
-pre {
-  display: block;
-  padding: 13.333px 20px;
-  margin: 0 0 20px;
-  font-size: 13px;
-line-height: 1.4;
-  background-color: #fff;
-  border-left: 2px solid rgba(120,120,120,0.35);
-  white-space: pre;
-  white-space: pre-wrap;
-  word-break: normal;
-  word-wrap: break-word;
-  overflow: auto;
-  font-family: Menlo,Monaco,"Liberation Mono",Consolas,monospace !important;
-}
-
 #map {
-  height: 500px;
+  height: 700px;
 }
 
 .demo-card-image.mdl-card {
@@ -223,26 +29,92 @@ line-height: 1.4;
   font-weight: 500;
 }
 
+#loading {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+#loading > .mdl-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -14px;
+  margin-top: -14px;
+}
+
+.options {
+  padding: 20px;
+  text-align: center;
+}
+
+.options label.mdl-radio {
+  margin-right: 20px;
+}
+
 </style>
 
 </head>
 <body>
-<section class='container'>
-          <hgroup>
-            <h1>Welcome to your Node.js application on OpenShift</h1>
-          </hgroup>
-
-
-        <div class="row">
-          <section class='col-xs-12 col-sm-12 col-md-12'>
-            <div id="map"></div>
-          </section>
-        </div>
-
-        <footer>
-          <div class="logo"><a href="https://www.openshift.com/"></a></div>
-        </footer>
-</section>
+<!-- Always shows a header, even in smaller screens. -->
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <!-- Title -->
+      <span class="mdl-layout-title">TravelMe</span>
+      <!-- Add spacer, to align navigation to the right -->
+      <div class="mdl-layout-spacer"></div>
+      <!-- Navigation. We hide it in small screens. -->
+    </div>
+  </header>
+  <main class="mdl-layout__content">
+    <div class="page-content">
+      <div class="options">
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-1">
+          <input type="radio" id="option-1" class="mdl-radio__button" name="options" value="all" checked>
+          <span class="mdl-radio__label">All</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-2">
+          <input type="radio" id="option-2" class="mdl-radio__button" name="options" value="food">
+          <span class="mdl-radio__label">Food</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-3">
+          <input type="radio" id="option-3" class="mdl-radio__button" name="options" value="drinks">
+          <span class="mdl-radio__label">Drinks</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-4">
+          <input type="radio" id="option-4" class="mdl-radio__button" name="options" value="coffee">
+          <span class="mdl-radio__label">Coffee</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-5">
+          <input type="radio" id="option-5" class="mdl-radio__button" name="options" value="shops">
+          <span class="mdl-radio__label">Shops</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-6">
+          <input type="radio" id="option-6" class="mdl-radio__button" name="options" value="arts">
+          <span class="mdl-radio__label">Arts</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-7">
+          <input type="radio" id="option-7" class="mdl-radio__button" name="options" value="outdoors">
+          <span class="mdl-radio__label">Outdoors</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-8">
+          <input type="radio" id="option-8" class="mdl-radio__button" name="options" value="sights">
+          <span class="mdl-radio__label">Sights</span>
+        </label>
+      </div>
+      <div id="map"></div>
+    </div>
+  </main>
+  <div id="loading">
+    <div class="mdl-spinner mdl-js-spinner is-active"></div>
+  </div>
+</div>
 <script type="text/javascript">
 var map;
 function initMap() {
@@ -294,7 +166,20 @@ function initMap() {
 
     function searchVenues() {
       console.log("searching");
-      $.getJSON("/route/"+_points.origin.lat() + "," + _points.origin.lng() + "/" + _points.destination.lat() + "," + _points.destination.lng(),
+      $("#loading").show();
+      var section = $('.options input[name=options]:checked').val();
+      console.log(section);
+      var query = {};
+      if (section != 'all') {
+        query.section = section;
+      }
+      if (_places.length > 0) {
+        $.each(_places, function (key, place) {
+          place.m.setMap(null);
+        });
+        _places = [];
+      }
+      $.getJSON("/route/"+_points.origin.lat() + "," + _points.origin.lng() + "/" + _points.destination.lat() + "," + _points.destination.lng(), query,
       function(data) {
         console.log(data);
         displayDirectionsPolyline(data.directions);
@@ -322,6 +207,7 @@ function initMap() {
             });
           }
         });
+        $("#loading").hide();
       });
     }
 

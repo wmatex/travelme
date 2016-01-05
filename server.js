@@ -5,6 +5,9 @@ var fs      = require('fs');
 var request = require('request');
 var extend = require('util')._extend;
 var async  = require('async');
+var polyline = require('polyline');
+
+// require('request').debug = true;
 
 /**
  *  Define the sample application.
@@ -29,7 +32,7 @@ var SampleApp = function() {
         self.directionsAPI = 'https://maps.googleapis.com/maps/api/directions/json?';
         self.foursquareAPI = 'https://api.foursquare.com/v2/venues/explore';
 
-        self.MAX_FSQ_REQUESTS = 5;
+        self.MAX_FSQ_REQUESTS = 10;
 
         if (typeof self.ipaddress === "undefined") {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
@@ -96,7 +99,6 @@ var SampleApp = function() {
     }
 
     function foursquareRequest(options, success, fail) {
-      console.log(options);
       var fopts = extend(options, {
           client_id: 'GOOXRPVHTF4EWWQ3XYW0R1BENO2SNXSKTSEHCMRQHUVEFYPT',
           client_secret: 'LCCI2TUVFRBNMY4AAUBFVTT3D4BIGJFXIRPTX425QABJMNCP',
@@ -104,7 +106,8 @@ var SampleApp = function() {
           m: 'foursquare',
           llAcc: 1,
           openNow: 1,
-          venuePhotos: 1
+          venuePhotos: 1,
+          limit: 3,
         });
       return jsonRequest(
         self.foursquareAPI,
@@ -116,7 +119,6 @@ var SampleApp = function() {
 
     function processVenues(callback) {
       return function(response, data) {
-        console.log(data);
         if (data.response.totalResults > 0) {
           callback(null, data.response.groups[0].items);
         } else {
@@ -130,11 +132,17 @@ var SampleApp = function() {
      */
     self.createRoutes = function() {
       self.app.get('/route/:start/:end', function(req, res) {
-
         res.setHeader('Content-Type', 'application/json');
 
         var startPoint = req.params.start;
         var endPoint   = req.params.end;
+
+        var section = null;
+        if (typeof req.query != "undefined" && typeof req.query.section != "undefined") {
+          section = req.query.section ;
+        }
+        console.log(section);
+        console.log(req.query);
 
         jsonRequest(
           self.directionsAPI,
@@ -144,51 +152,32 @@ var SampleApp = function() {
             mode: "walking",
           },
           function (response, data) {
-            var steps = data.routes[0].legs[0].steps;
+            var points = polyline.decode(data.routes[0].overview_polyline.points);
             var venues = [];
-            var resp = [{
-              lat: data.routes[0].legs[0].start_location.lat,
-              lng: data.routes[0].legs[0].start_location.lng
-            }];
-            var requests = [
-              function (callback) {
-                var ll = data.routes[0].legs[0].start_location.lat + "," +
-                  data.routes[0].legs[0].start_location.lng;
-                foursquareRequest({
-                  ll: ll,
-                  radius: 100,
-                },
-                processVenues(callback),
-                function(error) {
-                  console.log(error);
-                  callback(null, error);
-                });
-              }
-            ];
-            var nOfSteps = steps.length;
-            var skip = Math.ceil((nOfSteps+1)/self.MAX_FSQ_REQUESTS);
+            var nOfSteps = points.length;
+            var requests = [];
+            var skip = Math.ceil(nOfSteps/self.MAX_FSQ_REQUESTS);
             if (skip < 1) skip = 1;
-            steps.forEach(function(step, index) {
-              if ((index+1) % skip == 0) {
+            points.forEach(function(step, index) {
+              if (index % skip == 0) {
                 requests.push(
                   function (callback) {
-                    var ll =step.end_location.lat + "," +
-                    step.end_location.lng;
+                    var ll =step[0] + "," + step[1];
                     foursquareRequest({
                       ll: ll,
                       radius: 100,
+                      section: section
                     },
                     processVenues(callback),
                     function (error) {
                       console.log("Foursquare request error: " + error);
-                      callback(null, error);
+                      callback(null, null);
                     }
                   );
                 }
               );
             }
             });
-            console.log(requests.length);
             async.parallel(
               requests,
               function (err, results) {
