@@ -196,6 +196,7 @@ var SampleApp = function() {
             candidates.forEach(function(c) {
               requests.push(
                 function (callback) {
+                  console.log(candidates, c);
                   foursquareRequest({
                     ll: c[0]+","+c[1],
                     radius: distance/2,
