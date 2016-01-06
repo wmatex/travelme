@@ -235,7 +235,6 @@ var SampleApp = function() {
                   places: closest,
                   directions: data
                 });
-                return;
               }
             );
           },
