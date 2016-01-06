@@ -138,6 +138,7 @@ var SampleApp = function() {
           // callback(null, closest);
           callback(null, items);
         } else {
+          console.warn(data);
           callback(null, null);
         }
       }
@@ -173,6 +174,11 @@ var SampleApp = function() {
         if (typeof req.query != "undefined" && typeof req.query.section != "undefined") {
           section = req.query.section ;
         }
+        var radius = self.RADIUS;
+        if (typeof req.query != "undefined" && typeof req.query.radius != "undefined") {
+          radius = req.query.radius;
+        }
+
         jsonRequest(
           self.directionsAPI,
           {
@@ -195,6 +201,7 @@ var SampleApp = function() {
                   foursquareRequest({
                     ll: c[0]+","+c[1],
                     radius: distance/2,
+                    section: section,
                   },
                   processVenues(callback, points),
                   function (error) {
@@ -204,29 +211,6 @@ var SampleApp = function() {
                 );
               });
             });
-            // var skip = Math.ceil(nOfSteps/self.MAX_FSQ_REQUESTS);
-            // if (skip < 1) skip = 1;
-            // points.forEach(function(step, index) {
-            //   if (index % skip == 0) {
-            //     requests.push(
-            //       function (callback) {
-            //         var ll =step[0] + "," + step[1];
-            //         foursquareRequest({
-            //           ll: ll,
-            //           radius: 100,
-            //           section: section
-            //         },
-            //         processVenues(callback),
-            //         function (error) {
-            //           console.log("Foursquare request error: " + error);
-            //           callback(null, null);
-            //         }
-            //       );
-            //     }
-            //   );
-            // }
-            // });
-
             async.parallel(
               requests,
               function (err, results) {
@@ -239,7 +223,7 @@ var SampleApp = function() {
                       result.forEach(function (item, index) {
                         if (!keys.hasOwnProperty(prefix+index)) {
                           var d = llDistance(point[0], point[1], item.venue.location.lat, item.venue.location.lng);
-                          if (d < self.RADIUS) {
+                          if (d < radius) {
                             closest.push(item);
                             keys[prefix+index] = true;
                           }

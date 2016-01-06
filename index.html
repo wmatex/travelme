@@ -12,6 +12,7 @@
 <style>
 #map {
   height: 700px;
+  clear: both;
 }
 
 .demo-card-image.mdl-card {
@@ -57,6 +58,20 @@
   margin-right: 20px;
 }
 
+.radius-option {
+  margin-left: 50px;
+  width: 200px;
+  display: inline-block;
+  float: left;
+}
+
+.radios {
+  display: inline-block;
+  float: left;
+  margin-left: 60px;
+  margin-top: 20px;
+}
+
 </style>
 
 </head>
@@ -75,38 +90,45 @@
   <main class="mdl-layout__content">
     <div class="page-content">
       <div class="options">
-        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-1">
-          <input type="radio" id="option-1" class="mdl-radio__button" name="options" value="all" checked>
-          <span class="mdl-radio__label">All</span>
-        </label>
-        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-2">
-          <input type="radio" id="option-2" class="mdl-radio__button" name="options" value="food">
-          <span class="mdl-radio__label">Food</span>
-        </label>
-        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-3">
-          <input type="radio" id="option-3" class="mdl-radio__button" name="options" value="drinks">
-          <span class="mdl-radio__label">Drinks</span>
-        </label>
-        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-4">
-          <input type="radio" id="option-4" class="mdl-radio__button" name="options" value="coffee">
-          <span class="mdl-radio__label">Coffee</span>
-        </label>
-        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-5">
-          <input type="radio" id="option-5" class="mdl-radio__button" name="options" value="shops">
-          <span class="mdl-radio__label">Shops</span>
-        </label>
-        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-6">
-          <input type="radio" id="option-6" class="mdl-radio__button" name="options" value="arts">
-          <span class="mdl-radio__label">Arts</span>
-        </label>
-        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-7">
-          <input type="radio" id="option-7" class="mdl-radio__button" name="options" value="outdoors">
-          <span class="mdl-radio__label">Outdoors</span>
-        </label>
-        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-8">
-          <input type="radio" id="option-8" class="mdl-radio__button" name="options" value="sights">
-          <span class="mdl-radio__label">Sights</span>
-        </label>
+        <div class="radios">
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-1">
+            <input type="radio" id="option-1" class="mdl-radio__button" name="options" value="all" checked>
+            <span class="mdl-radio__label">All</span>
+          </label>
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-2">
+            <input type="radio" id="option-2" class="mdl-radio__button" name="options" value="food">
+            <span class="mdl-radio__label">Food</span>
+          </label>
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-3">
+            <input type="radio" id="option-3" class="mdl-radio__button" name="options" value="drinks">
+            <span class="mdl-radio__label">Drinks</span>
+          </label>
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-4">
+            <input type="radio" id="option-4" class="mdl-radio__button" name="options" value="coffee">
+            <span class="mdl-radio__label">Coffee</span>
+          </label>
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-5">
+            <input type="radio" id="option-5" class="mdl-radio__button" name="options" value="shops">
+            <span class="mdl-radio__label">Shops</span>
+          </label>
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-6">
+            <input type="radio" id="option-6" class="mdl-radio__button" name="options" value="arts">
+            <span class="mdl-radio__label">Arts</span>
+          </label>
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-7">
+            <input type="radio" id="option-7" class="mdl-radio__button" name="options" value="outdoors">
+            <span class="mdl-radio__label">Outdoors</span>
+          </label>
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-8">
+            <input type="radio" id="option-8" class="mdl-radio__button" name="options" value="sights">
+            <span class="mdl-radio__label">Sights</span>
+          </label>
+        </div>
+        <p class="radius-option">
+          <label for="radius">Search radius</label>
+          <input id="radius" class="mdl-slider mdl-js-slider" type="range" step="50" min="50" max="500" value="100" tabindex="0">
+          <span class="mdl-radio__label radius-value">50m</span>
+        </p>
       </div>
       <div id="map"></div>
     </div>
@@ -116,6 +138,11 @@
   </div>
 </div>
 <script type="text/javascript">
+$(function() {
+  $('#radius').change(function() {
+    $('.radius-value').html($(this).val()+"m");
+  });
+});
 var map;
 function initMap() {
   $(function() {
@@ -172,11 +199,14 @@ function initMap() {
     }
 
     function searchVenues() {
-      console.log("searching");
+      if (_points.origin == null || _points.destination == null) return;
+      
       $("#loading").show();
       var section = $('.options input[name=options]:checked').val();
-      console.log(section);
-      var query = {};
+      var radius = $('#radius').val();
+      var query = {
+        radius: radius,
+      };
       if (section != 'all') {
         query.section = section;
       }
@@ -251,7 +281,12 @@ function initMap() {
         searchVenues();
       }
     });
+
+    $('.options input').change(function() {
+      searchVenues();
+    });
   });
+
 }
 
 </script>
