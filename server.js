@@ -248,6 +248,11 @@ var SampleApp = function() {
         res.setHeader('Content-Type', 'text/html');
         res.send(fs.readFileSync('./index.html'));
       });
+
+      self.app.get('/js/:script', function (req, res) {
+        res.setHeader('Content-Type', 'application/javascript');
+        res.send(fs.readFileSync('./js/'+req.params.script));
+      });
     };
 
 
