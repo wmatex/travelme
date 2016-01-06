@@ -191,8 +191,6 @@ var SampleApp = function() {
             var startPoint = points[0], endPoint = points[points.length-1];
             var distance = llDistance(startPoint[0], startPoint[1], endPoint[0], endPoint[1]);
             var center = findCenter(points);
-            var venues = [];
-            var nOfSteps = points.length;
             var requests = [];
             var candidates = [points[0], center, points[1]];
             candidates.forEach(function(c) {
