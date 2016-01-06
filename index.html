@@ -57,7 +57,9 @@ main.mdl-layout__content, .page-content {
 
 #map {
   flex-grow: 1;
+  flex-direction: column;
   clear: both;
+  min-height: 400px;
 }
 
 .options .mdl-slider, .options .mdl-slider__background-flex {
@@ -72,15 +74,12 @@ main.mdl-layout__content, .page-content {
 <body>
 <!-- Always shows a header, even in smaller screens. -->
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-  <header class="mdl-layout__header">
+  <!--<header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <!-- Title -->
       <span class="mdl-layout-title">TravelMe</span>
-      <!-- Add spacer, to align navigation to the right -->
       <div class="mdl-layout-spacer"></div>
-      <!-- Navigation. We hide it in small screens. -->
     </div>
-  </header>
+  </header>-->
   <main class="mdl-layout__content">
     <div class="page-content">
       <div class="options mdl-grid mdl-cell--12-col mdl-cell">
