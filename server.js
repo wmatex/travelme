@@ -148,10 +148,10 @@ var SampleApp = function() {
       var s = points[0], e = points[points.length-1];
       var cL = (s[0]+e[0])/2, cG = (s[1]+e[1])/2;
       var center = null;
-      var minD = Number.MAX_SAFE_INTEGER;
+      var minD = -1;
       points.forEach(function(p) {
         var d =llDistance(cL, cG, p[0], p[1]);
-        if (d < minD) {
+        if (minD < 0 || d < minD) {
           center = p;
           minD = d;
         }
