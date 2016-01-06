@@ -200,7 +200,7 @@ function initMap() {
 
     function searchVenues() {
       if (_points.origin == null || _points.destination == null) return;
-      
+
       $("#loading").show();
       var section = $('.options input[name=options]:checked').val();
       var radius = $('#radius').val();
@@ -241,8 +241,7 @@ function initMap() {
             _places.push(place);
           }
         });
-        $("#loading").hide();
-      });
+      }).always(function () {$("#loading").hide(); });
     }
 
     function createMarker(latLng, point, label) {
