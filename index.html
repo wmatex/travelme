@@ -186,33 +186,29 @@ function initMap() {
         console.log(data);
         displayDirectionsPolyline(data.directions);
 
-        $.each(data.places, function(key, item) {
-          if (item != null) {
-            $.each(item, function(key, place) {
-              if (typeof place.venue != "undefined") {
-                var photo = null;
-                if (place.venue.photos.groups.length > 0 && place.venue.photos.groups[0].items.length > 0) {
-                  var p = place.venue.photos.groups[0].items[0];
-                  photo = p.prefix + "cap256" + p.suffix;
-                }
-                var category = place.venue.categories[0].icon;
-                var place = {
-                  m: new google.maps.Marker({
-                    position: {lat: place.venue.location.lat, lng: place.venue.location.lng },
-                    map: map,
-                    icon: category.prefix + "bg_32" + category.suffix,
-                  }),
-                  w: new google.maps.InfoWindow({
-                    content: '<div class="demo-card-image mdl-card mdl-shadow--2dp" style="background: url(\'' + photo + '\') center / cover"><div class="mdl-card__title mdl-card--expand"></div> <div class="mdl-card__actions"> <span class="demo-card-image__filename">' + place.venue.name + '</span> </div></div>'
+        $.each(data.places, function(key, place) {
+          if (typeof place.venue != "undefined") {
+            var photo = null;
+            if (place.venue.photos.groups.length > 0 && place.venue.photos.groups[0].items.length > 0) {
+              var p = place.venue.photos.groups[0].items[0];
+              photo = p.prefix + "cap256" + p.suffix;
+            }
+            var category = place.venue.categories[0].icon;
+            var place = {
+              m: new google.maps.Marker({
+                position: {lat: place.venue.location.lat, lng: place.venue.location.lng },
+                map: map,
+                icon: category.prefix + "bg_32" + category.suffix,
+              }),
+              w: new google.maps.InfoWindow({
+                content: '<div class="demo-card-image mdl-card mdl-shadow--2dp" style="background: url(\'' + photo + '\') center / cover"><div class="mdl-card__title mdl-card--expand"></div> <div class="mdl-card__actions"> <span class="demo-card-image__filename">' + place.venue.name + '</span> </div></div>'
 
-                  })
-                };
-                place.m.addListener('click', function() {
-                  place.w.open(map, place.m);
-                });
-                _places.push(place);
-              }
+              })
+            };
+            place.m.addListener('click', function() {
+              place.w.open(map, place.m);
             });
+            _places.push(place);
           }
         });
         $("#loading").hide();

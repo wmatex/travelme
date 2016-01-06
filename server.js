@@ -33,6 +33,9 @@ var SampleApp = function() {
         self.foursquareAPI = 'https://api.foursquare.com/v2/venues/explore';
 
         self.MAX_FSQ_REQUESTS = 100;
+        self.DEG2RAD = (3.14159265358979/180.0);
+        self.RADIUS = 100;
+        self.TIMEOUT = 2000;
 
         if (typeof self.ipaddress === "undefined") {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
@@ -88,7 +91,7 @@ var SampleApp = function() {
         headers: { //We can define headers too
           'Content-Type': 'application/json',
         },
-        timeout: 1000,
+        timeout: self.TIMEOUT,
       }, function(error, response, body){
         if(error) {
           fail(error);
@@ -107,7 +110,7 @@ var SampleApp = function() {
           llAcc: 1,
           openNow: 1,
           venuePhotos: 1,
-          limit: 3,
+          limit: 50,
         });
       return jsonRequest(
         self.foursquareAPI,
@@ -117,15 +120,44 @@ var SampleApp = function() {
       );
     }
 
-    function processVenues(callback) {
+    function llDistance(lat1, lng1, lat2, lng2) {
+      lat1 *= self.DEG2RAD;
+      lat2 *= self.DEG2RAD;
+      lng1 *= self.DEG2RAD;
+      lng2 *= self.DEG2RAD;
+      var R = 6371000;
+      var x = (lng2-lng1) * Math.cos((lat1+lat2)/2);
+      var y = (lat2-lat1);
+      return Math.sqrt(x*x + y*y) * R;
+    }
+
+    function processVenues(callback, points) {
       return function(response, data) {
         if (data.response.totalResults > 0) {
-          callback(null, data.response.groups[0].items);
+          var items = data.response.groups[0].items;
+          // callback(null, closest);
+          callback(null, items);
         } else {
           callback(null, null);
         }
       }
     }
+
+    function findCenter(points) {
+      var s = points[0], e = points[points.length-1];
+      var cL = (s[0]+e[0])/2, cG = (s[1]+e[1])/2;
+      var center = null;
+      var minD = Number.MAX_SAFE_INTEGER;
+      points.forEach(function(p) {
+        var d =llDistance(cL, cG, p[0], p[1]);
+        if (d < minD) {
+          center = p;
+          minD = d;
+        }
+      });
+      return center;
+    }
+
 
     /**
      *  Create the routing table entries + handlers for the application.
@@ -141,9 +173,6 @@ var SampleApp = function() {
         if (typeof req.query != "undefined" && typeof req.query.section != "undefined") {
           section = req.query.section ;
         }
-        console.log(section);
-        console.log(req.query);
-
         jsonRequest(
           self.directionsAPI,
           {
@@ -153,38 +182,78 @@ var SampleApp = function() {
           },
           function (response, data) {
             var points = polyline.decode(data.routes[0].overview_polyline.points);
+            var startPoint = points[0], endPoint = points[points.length-1];
+            var distance = llDistance(startPoint[0], startPoint[1], endPoint[0], endPoint[1]);
+            var center = findCenter(points);
             var venues = [];
             var nOfSteps = points.length;
             var requests = [];
-            var skip = Math.ceil(nOfSteps/self.MAX_FSQ_REQUESTS);
-            if (skip < 1) skip = 1;
-            points.forEach(function(step, index) {
-              if (index % skip == 0) {
-                requests.push(
-                  function (callback) {
-                    var ll =step[0] + "," + step[1];
-                    foursquareRequest({
-                      ll: ll,
-                      radius: 100,
-                      section: section
-                    },
-                    processVenues(callback),
-                    function (error) {
-                      console.log("Foursquare request error: " + error);
-                      callback(null, null);
-                    }
-                  );
-                }
-              );
-            }
+            var candidates = [points[0], center, points[1]];
+            candidates.forEach(function(c) {
+              requests.push(
+                function (callback) {
+                  foursquareRequest({
+                    ll: c[0]+","+c[1],
+                    radius: distance/2,
+                  },
+                  processVenues(callback, points),
+                  function (error) {
+                    console.log("Foursquare request error: " + error);
+                    callback(null, null);
+                  }
+                );
+              });
             });
+            // var skip = Math.ceil(nOfSteps/self.MAX_FSQ_REQUESTS);
+            // if (skip < 1) skip = 1;
+            // points.forEach(function(step, index) {
+            //   if (index % skip == 0) {
+            //     requests.push(
+            //       function (callback) {
+            //         var ll =step[0] + "," + step[1];
+            //         foursquareRequest({
+            //           ll: ll,
+            //           radius: 100,
+            //           section: section
+            //         },
+            //         processVenues(callback),
+            //         function (error) {
+            //           console.log("Foursquare request error: " + error);
+            //           callback(null, null);
+            //         }
+            //       );
+            //     }
+            //   );
+            // }
+            // });
+
             async.parallel(
               requests,
               function (err, results) {
+                var closest = [];
+                var keys = {};
+                points.forEach(function (point) {
+                  var prefix = 1000;
+                  results.forEach(function (result) {
+                    if (result) {
+                      result.forEach(function (item, index) {
+                        if (!keys.hasOwnProperty(prefix+index)) {
+                          var d = llDistance(point[0], point[1], item.venue.location.lat, item.venue.location.lng);
+                          if (d < self.RADIUS) {
+                            closest.push(item);
+                            keys[prefix+index] = true;
+                          }
+                        }
+                      });
+                    }
+                    prefix *= 2;
+                  });
+                });
                 res.send({
-                  places: results,
+                  places: closest,
                   directions: data
                 });
+                return;
               }
             );
           },
