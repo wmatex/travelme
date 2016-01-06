@@ -139,7 +139,7 @@
 </div>
 <script type="text/javascript">
 $(function() {
-  $('#radius').change(function() {
+  $('#radius').on('input', function() {
     $('.radius-value').html($(this).val()+"m");
   });
 });
@@ -148,7 +148,8 @@ function initMap() {
   $(function() {
     map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: 50.075328, lng: 14.420450},
-      zoom: 8
+      zoom: 8,
+      draggableCursor: 'pointer',
     });
 
     if (navigator.geolocation) {
@@ -253,7 +254,6 @@ function initMap() {
         draggable: true,
       });
       marker.addListener('dragend', function(e) {
-        console.log(e);
         _points[point] = e.latLng;
         searchVenues();
       });
