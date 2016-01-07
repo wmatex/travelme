@@ -1,3 +1,6 @@
-The OpenShift `nodejs` cartridge documentation can be found at:
+TravelMe
+========
 
-http://openshift.github.io/documentation/oo_cartridge_guide.html#nodejs
+Simple application combining Foursquare Venue API and Google Directions API. It displays interesting locations along the given path
+
+[http://travelme-wmatex.rhcloud.com/](http://travelme-wmatex.rhcloud.com/)
