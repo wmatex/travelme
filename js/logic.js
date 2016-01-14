@@ -86,7 +86,8 @@ function initMap() {
                 icon: category.prefix + "bg_32" + category.suffix,
               }),
               w: new google.maps.InfoWindow({
-                content: '<div class="demo-card-image mdl-card mdl-shadow--2dp" style="background: url(\'' + photo + '\') center / cover"><div class="mdl-card__title mdl-card--expand"></div> <div class="mdl-card__actions"> <span class="demo-card-image__filename">' + place.venue.name + '</span> </div></div>'
+                content: '<a target="_blank" href="http://foursquare.com/v/' + place.venue.id + '" class="demo-card-image mdl-card mdl-shadow--2dp" style="background: url(\'' + photo + '\') center / cover"><div class="mdl-card__title mdl-card--expand"></div> <div class="mdl-card__actions"> <span class="demo-card-image__filename">' + place.venue.name + '</span> <span class="rating" style="background-color: #' + place.venue.ratingColor + ';">' + place.venue.rating + '</span></div></a>' +
+                '<p class="tips">' + place.tips[0].text + '</p>'
 
               })
             };

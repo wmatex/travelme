@@ -22,6 +22,7 @@ body {
 .demo-card-image.mdl-card {
   width: 256px;
   height: 256px;
+  text-decoration: none;
 }
 .demo-card-image > .mdl-card__actions {
   height: 52px;
@@ -81,7 +82,34 @@ main.mdl-layout__content, .page-content {
   width: 100%;
 }
 
+#doc {
+  width: 111px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
 
+.options {
+  margin-top: 30px;
+}
+
+.rating {
+  float: right;
+  width: 52px;
+  height: 52px;
+  position: relative;
+  line-height: 52px;
+  top: -16px;
+  right: -16px;
+  color: white;
+  text-align: center;
+  border-radius: 30px;
+}
+
+.tips {
+  width: 256px;
+  padding: 5px;
+}
 </style>
 
 </head>
@@ -96,6 +124,10 @@ main.mdl-layout__content, .page-content {
   </header>-->
   <main class="mdl-layout__content">
     <div class="page-content">
+      <a id="doc" target="_blank" href="http://petstore.swagger.io/?url=http://travelme-wmatex.rhcloud.com/swagger.json" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+        Documentation
+      </a>
+
       <div class="options mdl-grid mdl-cell--12-col mdl-cell">
         <div class="radios mdl-cell--8-col-desktop mdl-cell--12-col mdl-grid mdl-cell">
           <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-cell--2-col mdl-cell" for="option-1">

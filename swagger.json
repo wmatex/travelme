@@ -12,18 +12,18 @@
   "paths" : {
     "/route/{start}/{end}" : {
       "get" : {
-        "description" : "Returns route from :start to :end with the",
+        "description" : "Returns directions from {start} to {end} with the most interesting places along the route",
         "operationId" : "hello",
         "parameters" : [ {
           "name" : "start",
           "in" : "path",
-          "description" : "The startpoint of the route either as a name or in the format <latitude>,<longitude>",
+          "description" : "The startpoint of the route either as a name or in the format latitude,longitude",
           "required" : true,
           "type" : "string"
         }, {
           "name" : "end",
           "in" : "path",
-          "description" : "The endpoint of the route either as a name or in the format <latitude>,<longitude>",
+          "description" : "The endpoint of the route either as a name or in the format latitude,longitude",
           "required" : true,
           "type" : "string"
         } ],
