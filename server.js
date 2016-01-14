@@ -249,6 +249,11 @@ var SampleApp = function() {
         res.send(fs.readFileSync('./index.html'));
       });
 
+      self.app.get("/swagger.json", function(req, res) {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(fs.readFileSync('./swagger.json'));
+      });
+
       self.app.get('/js/:script', function (req, res) {
         res.setHeader('Content-Type', 'application/javascript');
         res.send(fs.readFileSync('./js/'+req.params.script));

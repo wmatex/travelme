@@ -1,0 +1,65 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "0.0.1",
+    "title" : "TravelMe"
+  },
+  "host" : "travelme-wmatex.rhcloud.com:80",
+  "basePath" : "/",
+  "schemes" : [ "http" ],
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "paths" : {
+    "/route/{start}/{end}" : {
+      "get" : {
+        "description" : "Returns route from :start to :end with the",
+        "operationId" : "hello",
+        "parameters" : [ {
+          "name" : "start",
+          "in" : "path",
+          "description" : "The startpoint of the route either as a name or in the format <latitude>,<longitude>",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "end",
+          "in" : "path",
+          "description" : "The endpoint of the route either as a name or in the format <latitude>,<longitude>",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/RouteResponse"
+            }
+          }
+        }
+      },
+      "x-swagger-router-controller" : "hello_world"
+    },
+    "/swagger" : {
+      "x-swagger-pipe" : "swagger_raw"
+    }
+  },
+  "definitions" : {
+    "RouteResponse" : {
+      "required" : [ "directions", "places" ],
+      "properties" : {
+        "places" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SinglePlace"
+          }
+        },
+        "directions" : {
+          "type" : "object",
+          "properties" : { }
+        }
+      }
+    },
+    "SinglePlace" : {
+      "type" : "object"
+    }
+  }
+}

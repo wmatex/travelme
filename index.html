@@ -15,6 +15,10 @@ body {
   font-size: 16px;
 }
 
+.mdl-layout {
+  position: absolute;
+}
+
 .demo-card-image.mdl-card {
   width: 256px;
   height: 256px;
@@ -53,13 +57,23 @@ main.mdl-layout__content, .page-content {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  height: 100%;
 }
 
-#map {
+#body {
   flex-grow: 1;
   flex-direction: column;
   clear: both;
-  min-height: 400px;
+  min-height: 500px;
+  position: relative;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .options .mdl-slider, .options .mdl-slider__background-flex {
@@ -125,7 +139,9 @@ main.mdl-layout__content, .page-content {
           <span class="mdl-radio__label radius-value mdl-cell--3-dektop mdl-cell mdl-cell--1-col">100m</span>
         </div>
       </div>
-      <div id="map"></div>
+      <div id="body">
+        <div id="map"></div>
+      </div>
     </div>
   </main>
   <div id="loading">
