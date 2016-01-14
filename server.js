@@ -251,6 +251,7 @@ var SampleApp = function() {
 
       self.app.get("/swagger.json", function(req, res) {
         res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', 'http://petstore.swagger.io');
         res.send(fs.readFileSync('./swagger.json'));
       });
 
