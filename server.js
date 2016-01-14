@@ -166,6 +166,7 @@ var SampleApp = function() {
     self.createRoutes = function() {
       self.app.get('/route/:start/:end', function(req, res) {
         res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', 'http://petstore.swagger.io');
 
         var startPoint = req.params.start;
         var endPoint   = req.params.end;
